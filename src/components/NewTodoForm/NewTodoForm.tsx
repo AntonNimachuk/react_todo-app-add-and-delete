@@ -1,8 +1,9 @@
 /* eslint-disable */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Todo } from '../../types/Todo';
 import { ErrorType } from '../../types/ErrorType';
+import * as clientMethods from '../../api/todos';
 
 type Props = {
   onAdd : (value : Todo) => void;
@@ -12,6 +13,13 @@ type Props = {
 
 export const NewTodoForm: React.FC<Props> = ({onAdd, onError, isLoading}) => {
   const [title, setTitle] = useState('');
+  const inputFocusRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputFocusRef.current?.focus();
+    }
+  }, [isLoading]);
 
   const handleSubmit = async(event: React.FormEvent) => {
     event.preventDefault();
@@ -34,6 +42,7 @@ export const NewTodoForm: React.FC<Props> = ({onAdd, onError, isLoading}) => {
         value={title}
         onChange={event => setTitle(event.target.value)}
         disabled={isLoading}
+        ref={inputFocusRef}
       />
     </form>
   );
