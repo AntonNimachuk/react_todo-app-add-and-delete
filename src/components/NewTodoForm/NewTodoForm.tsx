@@ -8,18 +8,19 @@ import * as clientMethods from '../../api/todos';
 type Props = {
   onAdd : (value : Todo) => void;
   onError : (message : ErrorType) => void;
-  isLoading : boolean;
+  setTempTodo : (tempTodo : Todo | null) => void;
 }
 
-export const NewTodoForm: React.FC<Props> = ({onAdd, onError, isLoading}) => {
+export const NewTodoForm: React.FC<Props> = ({onAdd, onError, setTempTodo}) => {
   const [title, setTitle] = useState('');
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const inputFocusRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isSubmiting) {
       inputFocusRef.current?.focus();
     }
-  }, [isLoading]);
+  }, [isSubmiting]);
 
   const handleSubmit = async(event: React.FormEvent) => {
     event.preventDefault();
@@ -28,8 +29,30 @@ export const NewTodoForm: React.FC<Props> = ({onAdd, onError, isLoading}) => {
       onError(ErrorType.EmptyTitle);
       return;
     }
+
+
+
+    try{
+      setIsSubmiting(true);
+
+      setTempTodo({ id: 0, userId: clientMethods.USER_ID, title: title.trim(), completed: false,});
+
+      const createdTodo = await clientMethods.addTodo({
+        userId: clientMethods.USER_ID,
+        title: title.trim(),
+        completed: false,
+      });
+
+      onAdd(createdTodo);
+      onError(ErrorType.None);
+      setTitle('');
+    } catch {
+      onError(ErrorType.Add);
+    } finally {
+      setTempTodo(null);
+      setIsSubmiting(false);
+    }
     // 2. Clear previous error
-    onError(ErrorType.None);
   };
 
   return(
@@ -41,7 +64,7 @@ export const NewTodoForm: React.FC<Props> = ({onAdd, onError, isLoading}) => {
         placeholder="What needs to be done?"
         value={title}
         onChange={event => setTitle(event.target.value)}
-        disabled={isLoading}
+        disabled={isSubmiting}
         ref={inputFocusRef}
       />
     </form>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { UserWarning } from './UserWarning';
 import * as clientMethods from './api/todos';
 import type { Todo } from './types/Todo'
@@ -17,6 +17,7 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(ErrorType.None);
   const [selectedFilterLink, setSelectedFilterLink] = useState(FilterType.All);
+  const [tempTodo, setTempTodo] = useState<Todo | null>(null);
 
   const filterLinks = [
     { label: 'All', value: FilterType.All, href: '#/', dataCy: 'FilterLinkAll' },
@@ -74,7 +75,6 @@ export const App: React.FC = () => {
 
       <div className="todoapp__content">
         <header className="todoapp__header">
-          {/* this button should have `active` class only if all todos are completed */}
           {todos.length > 0 &&
             <button
               type="button"
@@ -83,11 +83,10 @@ export const App: React.FC = () => {
             />
           }
 
-          {/* Add a todo on form submit */}
           <NewTodoForm
             onAdd={handleAddTodo}
             onError={setError}
-            isLoading={isLoading}
+            setTempTodo={setTempTodo}
           />
         </header>
 
@@ -97,7 +96,6 @@ export const App: React.FC = () => {
           />
         </section>
 
-        {/* Hide the footer if there are no todos */}
         {todos.length > 0 && (
         <footer className="todoapp__footer"
           data-cy="Footer"
@@ -106,7 +104,6 @@ export const App: React.FC = () => {
             {`${todos.filter(todo => !todo.completed).length } items left`}
           </span>
 
-          {/* Active link should have the 'selected' class */}
           <nav className="filter" data-cy="Filter">
             {filterLinks.map(link => (
               <a 
@@ -121,7 +118,6 @@ export const App: React.FC = () => {
             ))}
           </nav>
 
-          {/* this button should be disabled if there are no completed todos */}
           <button
             type="button"
             className={`todoapp__clear-completed
@@ -135,8 +131,6 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* DON'T use conditional rendering to hide the notification */}
-      {/* Add the 'hidden' class to hide the message smoothly */}
       <div
         data-cy="ErrorNotification"
         className={`notification is-danger is-light has-text-weight-normal ${!error ? `hidden` : ''}`}
@@ -147,7 +141,6 @@ export const App: React.FC = () => {
           className="delete"
           onClick={() => setError(ErrorType.None)}
         />
-        {/* show only one message at a time */}
         {error}
       </div>
     </div>
