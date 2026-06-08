@@ -7,6 +7,7 @@ import { NewTodoForm } from './components/NewTodoForm';
 import { TodoList } from './components/TodoList';
 import { ErrorType } from './types/ErrorType';
 import { FilterType } from './types/FilterType';
+import { TodoItem } from './components/TodoItem';
 
 export const App: React.FC = () => {
   if (!clientMethods.USER_ID) {
@@ -18,6 +19,7 @@ export const App: React.FC = () => {
   const [error, setError] = useState(ErrorType.None);
   const [selectedFilterLink, setSelectedFilterLink] = useState(FilterType.All);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
+  const [deletingIds, setDeletingIds] = useState();
 
   const filterLinks = [
     { label: 'All', value: FilterType.All, href: '#/', dataCy: 'FilterLinkAll' },
@@ -27,6 +29,10 @@ export const App: React.FC = () => {
 
   const handleAddTodo = (newTodo : Todo) : void => {
     setTodos([...todos, newTodo]);
+  }
+
+  const handleDelete = (deleteId : number) : void => {
+    setDeletingIds(deleteId);
   }
 
   useEffect(() => {
@@ -93,7 +99,9 @@ export const App: React.FC = () => {
         <section className="todoapp__main" data-cy="TodoList">
           <TodoList
             todos={filteredTodos}
+            onDelete={handleDelete}
           />
+          { tempTodo && <TodoItem todo={tempTodo} isLoading /> }
         </section>
 
         {todos.length > 0 && (
@@ -106,7 +114,7 @@ export const App: React.FC = () => {
 
           <nav className="filter" data-cy="Filter">
             {filterLinks.map(link => (
-              <a 
+              <a
                 key={link.value}
                 href={link.href}
                 className={`filter__link ${selectedFilterLink === link.value ? 'selected' : ''}`}

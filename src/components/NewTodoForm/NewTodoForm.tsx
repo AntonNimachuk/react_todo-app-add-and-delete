@@ -30,8 +30,6 @@ export const NewTodoForm: React.FC<Props> = ({onAdd, onError, setTempTodo}) => {
       return;
     }
 
-
-
     try{
       setIsSubmiting(true);
 
