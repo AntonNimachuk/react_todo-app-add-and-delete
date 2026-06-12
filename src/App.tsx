@@ -19,7 +19,7 @@ export const App: React.FC = () => {
   const [error, setError] = useState(ErrorType.None);
   const [selectedFilterLink, setSelectedFilterLink] = useState(FilterType.All);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
-  const [deletingIds, setDeletingIds] = useState();
+  const [deletingIds, setDeletingIds] = useState<number | void>();
 
   const filterLinks = [
     { label: 'All', value: FilterType.All, href: '#/', dataCy: 'FilterLinkAll' },
@@ -31,7 +31,7 @@ export const App: React.FC = () => {
     setTodos([...todos, newTodo]);
   }
 
-  const handleDelete = (deleteId : number) : void => {
+  const handleDelete = (deleteId : number | void) : void => {
     setDeletingIds(deleteId);
   }
 
