@@ -7,6 +7,7 @@ import { TodoList } from './components/TodoList';
 import { ErrorType } from './types/ErrorType';
 import { FilterType } from './types/FilterType';
 import { TodoItem } from './components/TodoItem';
+import classNames from 'classnames';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -60,7 +61,7 @@ export const App: React.FC = () => {
   };
 
   const handleClearCompleted = () => {
-    completedTodos.forEach(todo => handleDelete(todo.id));
+    Promise.all(completedTodos.map(todo => handleDelete(todo.id)));
   };
 
   useEffect(() => {
@@ -180,7 +181,13 @@ export const App: React.FC = () => {
 
       <div
         data-cy="ErrorNotification"
-        className={`notification is-danger is-light has-text-weight-normal ${!error ? `hidden` : ''}`}
+        className={classNames(
+          'notification',
+          'is-danger',
+          'is-light',
+          'has-text-weight-normal',
+          {hidden: !error},
+        )}
       >
         <button
           data-cy="HideErrorButton"
