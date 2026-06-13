@@ -5,11 +5,19 @@ import type { Todo } from '../../types/Todo';
 
 type Props = {
   todos : (Todo[]);
-  onDelete : ( id: number | void ) => void;
+  onDelete : ( id: number) => void;
+  deletingIds : number[]
 }
 
-export const TodoList: React.FC<Props> = ({ todos, onDelete }) => (
+export const TodoList: React.FC<Props> = ({ todos, onDelete, deletingIds }) => (
   <>
-    {todos.map(todo=> <TodoItem key={todo.id} todo={todo} onDelete={onDelete}/>)}
+    {todos.map(todo=> (
+      <TodoItem
+        key={todo.id}
+        todo={todo}
+        onDelete={onDelete}
+        isLoading={deletingIds.includes(todo.id)}
+      />
+    ))}
   </>
 );

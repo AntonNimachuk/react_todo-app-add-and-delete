@@ -6,7 +6,7 @@ import type { Todo } from '../../types/Todo';
 type Props = {
   todo: Todo;
   isLoading?: boolean;
-  onDelete?: (id : number | void) => void
+  onDelete?: (id : number) => void
 }
 
 export const TodoItem: React.FC<Props> = ({ todo, isLoading, onDelete }) =>{
